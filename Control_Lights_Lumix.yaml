@@ -4,6 +4,13 @@ blueprint:
   domain: automation
   author: "@fredericomcorda"
   input:
+    conditions:
+      name: Conditions
+      description: Conditions to check before running the automation
+      default: []
+      selector:
+        entity:
+          domain: binary_sensor
     lumix_sensor:
       name: Lumix Sensor
       description: The sensor that measures the lumix level
@@ -34,6 +41,11 @@ trigger:
   platform: numeric_state
   entity_id: !input "lumix_sensor"
   below: !input "lumix_level"
+
+condition:
+  condition: state
+  entity_id: !input "conditions"
+  state: 'on'
 
 action:
   - service: light.turn_on
