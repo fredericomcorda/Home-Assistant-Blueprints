@@ -1,39 +1,33 @@
 blueprint:
   name: Increase light brightness based on lumix level
-  description: This blueprint creates an automation that gradually increases the brightness
-    of your lights when the lumix level falls below a certain value.
+  description: This blueprint creates an automation that gradually increases the brightness of your lights when the lumix level falls below a certain value.
   domain: automation
-  author: '@fredericomcorda'
+  author: "@fredericomcorda"
   input:
-    conditions:
-      name: Conditions
-      description: Conditions to check before running the automation
-      default: []
+    condition_entity:
+      name: Condition Entity
+      description: The entity to check the state of before running the automation
       selector:
         entity:
-          filter:
-            domain:
-            - binary_sensor
-          multiple: false
+    condition_state:
+      name: Condition State
+      description: The state that the condition entity must be in for the automation to run
     lumix_sensor:
       name: Lumix Sensor
       description: The sensor that measures the lumix level
       selector:
         entity:
           filter:
-          - domain:
-            - sensor
-          multiple: false
+            domain: sensor
     lumix_level:
       name: Lumix Level
-      description: The lumix level at which the lights should start increasing in
-        brightness
+      description: The lumix level at which the lights should start increasing in brightness
       default: 10
       selector:
         number:
-          min: 0.0
-          max: 100.0
-          step: 1.0
+          min: 0
+          max: 100
+          step: 1
           mode: slider
     light_entities:
       name: Lights
@@ -41,19 +35,20 @@ blueprint:
       selector:
         target:
           entity:
-          - domain:
-            - light
-  source_url: https://github.com/fredericomcorda/Home-Assistant-Blueprints/blob/main/Control_Lights_Lumix.yaml
+            domain: light
+
 trigger:
   platform: numeric_state
-  entity_id: !input lumix_sensor
-  below: !input lumix_level
+  entity_id: !input "lumix_sensor"
+  below: !input "lumix_level"
+
 condition:
   condition: state
-  entity_id: !input conditions
-  state: 'on'
+  entity_id: !input "condition_entity"
+  state: !input "condition_state"
+
 action:
-- service: light.turn_on
-  target: !input light_entities
-  data:
-    brightness_pct: '{{ [1, (lumix_level - states(lumix_sensor) | int)] | max }}'
+  - service: light.turn_on
+    target: !input "light_entities"
+    data:
+      brightness_pct: "{{ [1, (lumix_level - states(lumix_sensor) | int)] | max }}"
