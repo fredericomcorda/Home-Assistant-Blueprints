@@ -51,4 +51,4 @@ action:
   - service: light.turn_on
     target: !input "light_entities"
     data:
-      brightness_pct: "{{ [1, (lumix_level - states(lumix_sensor) | int)] | max }}"
+      brightness_pct: "{{ [1, (states(lumix_level) | int - states(lumix_sensor) | int)] | max }}"
