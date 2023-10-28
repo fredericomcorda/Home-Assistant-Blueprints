@@ -11,13 +11,6 @@ blueprint:
         entity:
           filter:
             domain: sensor
-    light_entities:
-      name: Lights
-      description: The lights to control
-      selector:
-        target:
-          entity:
-            domain: light
     lumix_level:
       name: Lumix Level
       description: The lumix level at which the lights should start increasing in brightness
@@ -28,6 +21,14 @@ blueprint:
           max: 100
           step: 1
           mode: slider
+    light_entities:
+      name: Lights
+      description: The lights to control
+      selector:
+        target:
+          entity:
+            domain: light
+
 
 trigger:
   platform: numeric_state
