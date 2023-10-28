@@ -56,8 +56,10 @@ condition:
   state: !input condition_state
 action:
   - service: light.turn_on
-    target: !input light_entities
+    target: !input "light_entities"
     data:
-      brightness_pct:
-        "{{ [1, (states(!input lumix_sensor) | int - !input lumix_level
-        | int)] | max }}"
+      brightness_pct: >
+        {% set lumix_sensor = states(!input 'lumix_sensor') | int %}
+        {% set lumix_level = states(!input 'lumix_level') | int %}
+        {% set brightness = [1, (lumix_sensor - lumix_level | int)] | max %}
+        {{ brightness }}
