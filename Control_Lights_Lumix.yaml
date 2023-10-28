@@ -1,6 +1,6 @@
 blueprint:
   name: Increase light brightness based on lumix level
-  description: This blueprint creates an automation that gradually increases the brightness of your lights when the lumix level falls below 10.
+  description: This blueprint creates an automation that gradually increases the brightness of your lights when the lumix level falls below a certain value.
   domain: automation
   author: "@fredericomcorda"
   input:
@@ -18,16 +18,24 @@ blueprint:
         target:
           entity:
             domain: light
-    condition:
-      name: conditions
+    lumix_level:
+      name: Lumix Level
+      description: The lumix level at which the lights should start increasing in brightness
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          mode: slider
 
 trigger:
   platform: numeric_state
   entity_id: !input "lumix_sensor"
-  below: 10
+  below: !input "lumix_level"
 
 action:
   - service: light.turn_on
     target: !input "light_entities"
     data:
-      brightness_pct: "{{ [1, (10 - states(lumix_sensor) | int)] | max }}"
+      brightness_pct: "{{ [1, (lumix_level - states(lumix_sensor) | int)] | max }}"
